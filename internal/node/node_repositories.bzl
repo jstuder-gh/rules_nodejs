@@ -21,13 +21,14 @@ See https://docs.bazel.build/versions/main/skylark/repository_rules.html
 load("@bazel_tools//tools/build_defs/repo:utils.bzl", "maybe")
 load("@rules_nodejs//nodejs/private:os_name.bzl", "OS_ARCH_NAMES", "node_exists_for_os", "os_name")
 load("@rules_nodejs//nodejs:repositories.bzl", "DEFAULT_NODE_VERSION", "nodejs_register_toolchains", node_repositories_rule = "node_repositories")
+load("@rules_nodejs//nodejs:ts_repositories.bzl", "ts_repositories")
 load("//internal/common:check_bazel_version.bzl", "check_bazel_version")
 
 def node_repositories(**kwargs):
     """
     Wrapper macro around node_repositories_rule to call it for each platform.
 
-    Also register bazel toolchains, and make other convenience repositories.
+    Also register bazel toolchains, and make other convenience repositories such as yarn and typescript.
 
     Args:
       **kwargs: the documentation is generated from the node_repositories_rule, not this macro.
@@ -41,13 +42,10 @@ def node_repositories(**kwargs):
         minimum_bazel_version = "4.0.0",
     )
 
-    # buildifier: disable=print
-    print("""WARN: node_repositories is deprecated, please instead use:
-        load("@rules_nodejs//nodejs:repositories.bzl", "nodejs_register_toolchains")
-        nodejs_register_toolchains(name = "nodejs")
-
-        See https://github.com/bazelbuild/rules_nodejs/wiki/Migrating-to-5.0
-    """)
+    # Install the typescript package if a version is given
+    ts_version = kwargs.pop("ts_version", None)
+    if ts_version:
+        ts_repositories(ts_version = ts_version)
 
     # This needs to be setup so toolchains can access nodejs for all different versions
     node_version = kwargs.get("node_version", DEFAULT_NODE_VERSION)

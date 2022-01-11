@@ -6,13 +6,6 @@ load("@build_bazel_rules_nodejs//internal/linker:link_node_modules.bzl", "module
 load(":ts_config.bzl", "TsConfigInfo")
 load(":validate_options.bzl", "ValidOptionsInfo", _validate_lib = "lib")
 
-_DEFAULT_TSC = (
-    # BEGIN-INTERNAL
-    "@npm" +
-    # END-INTERNAL
-    "//typescript/bin:tsc"
-)
-
 _ATTRS = {
     "args": attr.string_list(),
     "data": attr.label_list(default = [], allow_files = True),
@@ -35,7 +28,7 @@ _ATTRS = {
     # that compiler might allow more sources than tsc does.
     "srcs": attr.label_list(allow_files = True, mandatory = True),
     "supports_workers": attr.bool(default = False),
-    "tsc": attr.label(default = Label(_DEFAULT_TSC), executable = True, cfg = "host"),
+    "tsc": attr.label(executable = True, cfg = "host"),
     "transpile": attr.bool(doc = "whether tsc should be used to produce .js outputs"),
     "tsconfig": attr.label(mandatory = True, allow_single_file = [".json"]),
 }
