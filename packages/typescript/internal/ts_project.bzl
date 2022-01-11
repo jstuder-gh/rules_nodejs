@@ -28,7 +28,10 @@ _ATTRS = {
     # that compiler might allow more sources than tsc does.
     "srcs": attr.label_list(allow_files = True, mandatory = True),
     "supports_workers": attr.bool(default = False),
-    "tsc": attr.label(executable = True, cfg = "host"),
+    # This default assumes the typescript package was installed with ts_repositories
+    # using the default name.
+    # Note, the ts_project macro wrapper will override this if run from an npm package.
+    "tsc": attr.label(default = "@bbrnj_typescript//:tsc", executable = True, cfg = "host"),
     "transpile": attr.bool(doc = "whether tsc should be used to produce .js outputs"),
     "tsconfig": attr.label(mandatory = True, allow_single_file = [".json"]),
 }
