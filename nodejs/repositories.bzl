@@ -75,7 +75,7 @@ To avoid downloads, you can check in a vendored node.js binary or can build one 
 See [toolchains](./toolchains.md).
 """
 
-_ATTRS = {
+TOOLCHAIN_ATTRS = {
     "node_download_auth": attr.string_dict(
         default = {},
         doc = """auth to use for all url requests
@@ -114,6 +114,9 @@ and `{filename}` with the matching entry from the `node_repositories` attribute.
 
 If set then also set node_version to the version found in the .nvmrc file.""",
     ),
+}
+
+_INTERNAL_ATTRS = {
     "platform": attr.string(
         doc = "Internal use only. Which platform to install as a toolchain. If unset, we assume the repository is named nodejs_[platform]",
         values = BUILT_IN_NODE_PLATFORMS,
@@ -400,7 +403,7 @@ def _nodejs_repo_impl(repository_ctx):
 node_repositories = repository_rule(
     _nodejs_repo_impl,
     doc = _DOC,
-    attrs = _ATTRS,
+    attrs = dict(TOOLCHAIN_ATTRS, **_INTERNAL_ATTRS),
 )
 
 # Wrapper macro around everything above, this is the primary API
